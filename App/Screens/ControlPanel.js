@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
@@ -18,11 +19,16 @@ import {
   useTheme,
 } from "react-native-rapi-ui";
 import { Ionicons } from "@expo/vector-icons";
+import { UserLocationContext } from "../Context/UserLocationContext";
+import GlobalApi from "../Services/GlobalApi";
 
 export default function ControlPanel() {
   const [userEmail, setUserEmail] = useState("");
   const { isDarkmode, setTheme } = useTheme();
   const [loading, setLoading] = useState(false);
+  const [placeList, setPlaceList] = useState([]);
+  const { location, setLocation } = useContext(UserLocationContext);
+  const [city, setCity] = useState({});
   const styles = StyleSheet.create({
     listItem: {
       marginHorizontal: 20,
@@ -57,6 +63,17 @@ export default function ControlPanel() {
   });
   const [subscription, setSubscription] = useState(null);
 
+  const GetNearBySearchPlace = (value) => {
+    GlobalApi.nearByPlace(
+      location.coords.latitude,
+      location.coords.longitude,
+      value
+    ).then((resp) => {
+      setPlaceList(resp.data.results);
+      setCity(placeList[0]);
+      console.log(placeList[0]);
+    });
+  };
   const _slow = () => Accelerometer.setUpdateInterval(1000);
   const _fast = () => Accelerometer.setUpdateInterval(16);
 
@@ -70,8 +87,12 @@ export default function ControlPanel() {
   };
 
   useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
+    // if (location) {
+    //   GetNearBySearchPlace("car_repair");
+    // }
+
+    _unsubscribe();
+    return () => _subscribe();
   }, []);
 
   return (
@@ -126,6 +147,52 @@ export default function ControlPanel() {
                   </TouchableOpacity>
                 </View>
               </View>
+            </View>
+            <View style={{ flexDirection: "column", alignItems: "stretch" }}>
+              <Button
+                text={"Get Nearby Hospital"}
+                onPress={() => {
+                  GetNearBySearchPlace("hospital");
+                }}
+                style={{
+                  marginTop: 20,
+                }}
+                disabled={loading}
+              />
+              <Button
+                text={"Get Nearby Police"}
+                onPress={() => {
+                  GetNearBySearchPlace("car_repair");
+                }}
+                style={{
+                  marginTop: 20,
+                }}
+                disabled={loading}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: 20,
+              }}
+            >
+              <Image
+                resizeMode="contain"
+                style={{
+                  height: 20,
+                  width: 20,
+                }}
+                source={{ uri: city ? city.icon : null }}
+              />
+              <Text>
+                Business Status - {city ? city.business_status : "No Data Yet"}
+              </Text>
+              <Text>Place Name - {city ? city.name : "No Data Yet"}</Text>
+              <Text>
+                Place Address - {city ? city.vicinity : "No Data Yet"}
+              </Text>
+              <Text>Place ID - {city ? city.place_id : "No Data Yet"}</Text>
             </View>
           </ScrollView>
         </Layout>
