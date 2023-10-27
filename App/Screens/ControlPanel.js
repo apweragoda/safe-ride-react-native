@@ -150,7 +150,7 @@ export default function ControlPanel() {
             </View>
             <View style={{ flexDirection: "column", alignItems: "stretch" }}>
               <Button
-                text={"Get Nearby Hospital"}
+                text={"Get Nearest Hospital"}
                 onPress={() => {
                   GetNearBySearchPlace("hospital");
                 }}
@@ -160,7 +160,7 @@ export default function ControlPanel() {
                 disabled={loading}
               />
               <Button
-                text={"Get Nearby Police"}
+                text={"Get Nearest Police"}
                 onPress={() => {
                   GetNearBySearchPlace("car_repair");
                 }}
