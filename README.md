@@ -1,4 +1,3 @@
-# safe-ride-react-native
 # Safe Ride: Accident Detection and Assistance Mobile App
 
 ## Project Overview:
