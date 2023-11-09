@@ -22,7 +22,8 @@ import { Image } from "react-native";
 import { StyleSheet } from "react-native";
 import Colors from "../Shared/Colors";
 import { Dimensions } from "react-native";
-export default function Home() {
+import Login from "./Login";
+export default function Home({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
   const [placeList, setPlaceList] = useState([]);
   const { location, setLocation } = useContext(UserLocationContext);
@@ -90,6 +91,9 @@ export default function Home() {
         }}
         rightAction={() => {
           signOut(auth);
+          console.log("User Logged out");
+          alert("User Logged out");
+          navigation.navigate("Login");
         }}
       />
       <View
@@ -97,6 +101,7 @@ export default function Home() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
+          backgroundColor: isDarkmode ? "#262834" : "white",
         }}
       >
         <ScrollView

@@ -29,17 +29,13 @@ export default function ({ navigation }) {
 
   async function registerFirebase() {
     setLoading(true);
-    await createUserWithEmailAndPassword(auth, email, password).catch(
-      (error) => console.log(error),
-      function () {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // ...
-        setLoading(false);
-        alert(errorMessage);
-      }
-    );
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((user) => {
+        setLoading(false), alert("User Created!");
+        console.log("User Created! - " + email);
+        navigation.navigate("Login");
+      })
+      .catch((error) => console.log(error), setLoading(false), alert(error));
   }
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>

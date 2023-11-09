@@ -19,6 +19,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../Provider/AuthProvider";
 import Home from "./Home";
+import MainStack from "../Navigation/MainStack";
+import HomeNavigation from "../Navigation/HomeNavigation";
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
@@ -30,10 +32,7 @@ export default function ({ navigation }) {
   const { user } = useContext(AuthContext);
 
   const navigator = useNavigation();
-  // If the user is authenticated, navigate to the Home screen.
-  if (user) {
-    return <navigator to="Home" />;
-  }
+  // // If the user is authenticated, navigate to the Home screen.
 
   async function loginFirebase() {
     setLoading(true);
@@ -50,7 +49,7 @@ export default function ({ navigation }) {
       .then((user) => {
         console.log("User Logged In Successfully! - " + userEmail);
         setLoading(false);
-        navigator.navigate("home-screen");
+        navigation.navigate("home-screen");
       })
       .catch((error) => {
         console.log(error);
@@ -155,7 +154,7 @@ export default function ({ navigation }) {
               <Text size="md">Don't have an account?</Text>
               <TouchableOpacity
                 onPress={() => {
-                  navigator.navigate("register-screen");
+                  navigation.navigate("Register");
                 }}
               >
                 <Text
@@ -179,7 +178,7 @@ export default function ({ navigation }) {
             >
               <TouchableOpacity
                 onPress={() => {
-                  navigator.navigate("forgot-screen");
+                  navigation.navigate("Forgot");
                 }}
               >
                 <Text size="md" fontWeight="bold">

@@ -7,8 +7,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import HomeNavigation from "./HomeNavigation";
 import ControlPanel from "../Screens/ControlPanel";
+import Home from "../Screens/Home";
+import { themeColor, useTheme } from "react-native-rapi-ui";
 export default function TabNavigation() {
   const Tab = createBottomTabNavigator();
+  const { isDarkmode } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -20,6 +23,10 @@ export default function TabNavigation() {
         component={HomeNavigation}
         options={{
           tabBarLabel: "Home",
+          tabBarStyle: {
+            borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
+            backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
+          },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" color={color} size={size} />
           ),
@@ -30,6 +37,10 @@ export default function TabNavigation() {
         component={Search}
         options={{
           tabBarLabel: "Search",
+          tabBarStyle: {
+            borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
+            backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
+          },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="search" color={color} size={size} />
           ),
@@ -40,6 +51,10 @@ export default function TabNavigation() {
         component={ControlPanel}
         options={{
           tabBarLabel: "Control Panel",
+          tabBarStyle: {
+            borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
+            backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
+          },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="build" color={color} size={size} />
           ),
@@ -50,6 +65,10 @@ export default function TabNavigation() {
         component={Profile}
         options={{
           tabBarLabel: "Profile",
+          tabBarStyle: {
+            borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
+            backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
+          },
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="user-circle-o" color={color} size={size} />
           ),

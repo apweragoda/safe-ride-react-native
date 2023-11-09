@@ -3,10 +3,10 @@ import {
   TransitionPresets,
   createStackNavigator,
 } from "@react-navigation/stack";
-import Home from "../Screens/Home";
 import PlaceDetail from "../Components/PlaceDetail/PlaceDetail";
+import TabNavigation from "./TabNavigation";
 
-export default function HomeNavigation() {
+export default function MainStack() {
   const isAndroid = true;
   const MainStack = createStackNavigator();
   return (
@@ -18,12 +18,12 @@ export default function HomeNavigation() {
       }}
     >
       <MainStack.Screen
-        name="home-screen"
+        name="MainTabs"
         options={{ headerShown: false }}
-        component={Home}
+        component={TabNavigation}
       />
       <MainStack.Screen
-        name="place-detail"
+        name="PlaceDetail"
         options={{ title: "" }}
         component={PlaceDetail}
         screenOptions={{
