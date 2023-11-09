@@ -27,35 +27,6 @@ export default function ({ navigation }) {
   const [loading, setLoading] = useState(false);
   const navigator = useNavigation();
 
-  const registerFromAPI = async () => {
-    // Create an object to send in the request body
-    const dataToSend = {
-      email: email,
-      password: password,
-    };
-
-    // Convert the object to a JSON string
-    const jsonBody = JSON.stringify(dataToSend);
-
-    // Make the POST request
-    fetch(
-      "https://f00a-2402-d000-8118-a0b1-11bd-32f9-9add-1101.ngrok-free.app/api/user/register",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: jsonBody,
-      }
-    )
-      .then((response) => response.json())
-      .then((responseData) => {
-        console.log(JSON.stringify(responseData));
-        registerFirebase();
-      });
-  };
-
   async function registerFirebase() {
     setLoading(true);
     await createUserWithEmailAndPassword(auth, email, password).catch(

@@ -6,6 +6,9 @@ import {
 } from "@react-navigation/stack";
 import Home from "../Screens/Home";
 import PlaceDetail from "../Components/PlaceDetail/PlaceDetail";
+import Login from "../Screens/Login";
+import Register from "../Screens/Register";
+import ForgetPassword from "../Screens/ForgetPassword";
 
 export default function HomeNavigation() {
   const isAndroid = true;
@@ -18,6 +21,21 @@ export default function HomeNavigation() {
         ...(isAndroid && TransitionPresets.ModalPresentationIOS),
       }}
     >
+      {/* <Stack.Screen
+        name="login-screen"
+        options={{ headerShown: false }}
+        component={Login}
+      />
+      <Stack.Screen
+        name="register-screen"
+        options={{ headerShown: false }}
+        component={Register}
+      />
+      <Stack.Screen
+        name="forgot-screen"
+        options={{ headerShown: false }}
+        component={ForgetPassword}
+      /> */}
       <Stack.Screen
         name="home-screen"
         options={{ headerShown: false }}

@@ -8,6 +8,7 @@ import PlaceList from "../Components/Home/PlaceList";
 import { ScrollView } from "react-native";
 import { UserLocationContext } from "../Context/UserLocationContext";
 import { Ionicons } from "@expo/vector-icons";
+import { getAuth, signOut } from "firebase/auth";
 import {
   Button,
   Layout,
@@ -25,6 +26,7 @@ export default function Home() {
   const { isDarkmode, setTheme } = useTheme();
   const [placeList, setPlaceList] = useState([]);
   const { location, setLocation } = useContext(UserLocationContext);
+  const auth = getAuth();
   const styless = StyleSheet.create({
     logo: {
       width: 50,
@@ -79,12 +81,15 @@ export default function Home() {
             style={styless.userImage}
           />
         }
-        rightAction={() => {
+        leftAction={() => {
           if (isDarkmode) {
             setTheme("light");
           } else {
             setTheme("dark");
           }
+        }}
+        rightAction={() => {
+          signOut(auth);
         }}
       />
       <View

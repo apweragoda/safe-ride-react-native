@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -17,9 +17,8 @@ import {
   themeColor,
 } from "react-native-rapi-ui";
 import { useNavigation } from "@react-navigation/native";
-import Main from "../Navigation/test/MainStack";
-import MainTabs from "../Navigation/test/MainTabs";
 import { AuthContext } from "../Provider/AuthProvider";
+import Home from "./Home";
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
@@ -51,7 +50,7 @@ export default function ({ navigation }) {
       .then((user) => {
         console.log("User Logged In Successfully! - " + userEmail);
         setLoading(false);
-        navigation.navigate("MainTabs");
+        navigator.navigate("home-screen");
       })
       .catch((error) => {
         console.log(error);
@@ -156,7 +155,7 @@ export default function ({ navigation }) {
               <Text size="md">Don't have an account?</Text>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("Register");
+                  navigator.navigate("register-screen");
                 }}
               >
                 <Text
@@ -180,7 +179,7 @@ export default function ({ navigation }) {
             >
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("ForgetPassword");
+                  navigator.navigate("forgot-screen");
                 }}
               >
                 <Text size="md" fontWeight="bold">
