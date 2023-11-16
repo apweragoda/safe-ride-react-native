@@ -9,6 +9,7 @@ import HomeNavigation from "./HomeNavigation";
 import ControlPanel from "../Screens/ControlPanel";
 import Home from "../Screens/Home";
 import { themeColor, useTheme } from "react-native-rapi-ui";
+import HomeScreen from "../Screens/HomeScreen";
 export default function TabNavigation() {
   const Tab = createBottomTabNavigator();
   const { isDarkmode } = useTheme();
@@ -19,16 +20,30 @@ export default function TabNavigation() {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="Main"
         component={HomeNavigation}
         options={{
-          tabBarLabel: "Home",
+          tabBarLabel: "Main",
           tabBarStyle: {
             borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
             backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
           },
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color={color} size={size} />
+            <Ionicons name="apps" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Places"
+        component={Home}
+        options={{
+          tabBarLabel: "Places",
+          tabBarStyle: {
+            borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
+            backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
+          },
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="location" color={color} size={size} />
           ),
         }}
       />

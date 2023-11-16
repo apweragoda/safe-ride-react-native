@@ -10,6 +10,7 @@ import AuthNavigation from "./AuthNavigation";
 import Auth from "./AuthNavigation";
 import TabNavigation from "./TabNavigation";
 import MainStack from "./MainStack";
+import HomeScreen from "../Screens/HomeScreen";
 // Better put your these secret keys in .env file
 const firebaseConfig = {
   apiKey: "AIzaSyAKiDDG3AWrDynp7poWJj_rteA85vQl4Ik",
@@ -30,7 +31,7 @@ export default () => {
     <NavigationContainer>
       {user == null && <AuthNavigation />}
       {user == false && <AuthNavigation />}
-      {user == true && <MainStack />}
+      {user == true && <HomeNavigation />}
     </NavigationContainer>
   );
 };

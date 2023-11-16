@@ -68,7 +68,7 @@ export default function Home({ navigation }) {
   return (
     <Layout>
       <TopNav
-        middleContent="Home"
+        middleContent="Places"
         leftContent={
           <Ionicons
             name={isDarkmode ? "sunny" : "moon"}

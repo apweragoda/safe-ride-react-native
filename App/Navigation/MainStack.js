@@ -5,6 +5,8 @@ import {
 } from "@react-navigation/stack";
 import PlaceDetail from "../Components/PlaceDetail/PlaceDetail";
 import TabNavigation from "./TabNavigation";
+import HomeScreen from "../Screens/HomeScreen";
+import HomeNavigation from "./HomeNavigation";
 
 export default function MainStack() {
   const isAndroid = true;

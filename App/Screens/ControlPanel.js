@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  Dimensions,
   Image,
   KeyboardAvoidingView,
   ScrollView,
@@ -21,8 +22,13 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { UserLocationContext } from "../Context/UserLocationContext";
 import GlobalApi from "../Services/GlobalApi";
+import * as SMS from "expo-sms";
+import * as MailComposer from "expo-mail-composer";
+import { auth } from "../../Firebase";
+import { signOut } from "firebase/auth";
+import Colors from "../../assets/Colors/Colors";
 
-export default function ControlPanel() {
+export default function ControlPanel({ navigation }) {
   const [userEmail, setUserEmail] = useState("");
   const { isDarkmode, setTheme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -95,107 +101,159 @@ export default function ControlPanel() {
     return () => _subscribe();
   }, []);
 
+  const sendSMS = async () => {
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+      const { result } = await SMS.sendSMSAsync(
+        ["+94776081348"],
+        "My sample HelloWorld message"
+        // {
+        //   attachments: {
+        //     uri: "path/myfile.png",
+        //     mimeType: "image/png",
+        //     filename: "myfile.png",
+        //   },
+        // }
+      );
+      if (result) {
+        console.log("SMS sent: " + JSON.stringify(result));
+      }
+    } else {
+      alert("SMS is not available");
+    }
+  };
+  const sendEmail = async () => {
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+      const { result } = await SMS.sendSMSAsync(
+        ["+94776081348"],
+        "My sample HelloWorld message"
+        // {
+        //   attachments: {
+        //     uri: "path/myfile.png",
+        //     mimeType: "image/png",
+        //     filename: "myfile.png",
+        //   },
+        // }
+      );
+      if (result) {
+        console.log("SMS sent: " + JSON.stringify(result));
+      }
+    } else {
+      alert("SMS is not available");
+    }
+  };
+
   return (
     <Layout>
       <TopNav
         middleContent="Control Panel"
-        rightContent={
+        leftContent={
           <Ionicons
             name={isDarkmode ? "sunny" : "moon"}
             size={20}
             color={isDarkmode ? themeColor.white100 : themeColor.dark}
           />
         }
-        rightAction={() => {
+        rightContent={
+          <Image
+            source={require("./../../assets/user.png")}
+            style={styless.userImage}
+          />
+        }
+        leftAction={() => {
           if (isDarkmode) {
             setTheme("light");
           } else {
             setTheme("dark");
           }
         }}
+        rightAction={() => {
+          signOut(auth);
+          console.log("User Logged out");
+          alert("User Logged out");
+          navigation.navigate("Login");
+        }}
       />
       <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
-        <Layout>
-          <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1,
-            }}
-          >
-            <View style={styles.listItem}>
-              <View style={{ flexDirection: "column", alignItems: "stretch" }}>
-                <Text style={styless.text}>
-                  Accelerometer: (in x: number y: number z: number)
-                </Text>
-                <Text style={styless.text}>x: {x.toFixed(2)}</Text>
-                <Text style={styless.text}>y: {y.toFixed(2)}</Text>
-                <Text style={styless.text}>z: {z.toFixed(2)}</Text>
-                <View style={styless.buttonContainer}>
-                  <TouchableOpacity
-                    onPress={subscription ? _unsubscribe : _subscribe}
-                    style={styless.button}
-                  >
-                    <Text>{subscription ? "On" : "Off"}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={_slow}
-                    style={[styless.button, styless.middleButton]}
-                  >
-                    <Text>Slow</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={_fast} style={styless.button}>
-                    <Text>Fast</Text>
-                  </TouchableOpacity>
-                </View>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+        >
+          <View style={styles.listItem}>
+            <View style={{ flexDirection: "column", alignItems: "stretch" }}>
+              <Text style={styless.text}>
+                Accelerometer: (in x: number y: number z: number)
+              </Text>
+              <Text style={styless.text}>x: {x.toFixed(2)}</Text>
+              <Text style={styless.text}>y: {y.toFixed(2)}</Text>
+              <Text style={styless.text}>z: {z.toFixed(2)}</Text>
+              <View style={styless.buttonContainer}>
+                <TouchableOpacity
+                  onPress={subscription ? _unsubscribe : _subscribe}
+                  style={styless.button}
+                >
+                  <Text>{subscription ? "On" : "Off"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={_slow}
+                  style={[styless.button, styless.middleButton]}
+                >
+                  <Text>Slow</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={_fast} style={styless.button}>
+                  <Text>Fast</Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={{ flexDirection: "column", alignItems: "stretch" }}>
-              <Button
-                text={"Get Nearest Hospital"}
-                onPress={() => {
-                  GetNearBySearchPlace("hospital");
-                }}
-                style={{
-                  marginTop: 20,
-                }}
-                disabled={loading}
-              />
-              <Button
-                text={"Get Nearest Police"}
-                onPress={() => {
-                  GetNearBySearchPlace("car_repair");
-                }}
-                style={{
-                  marginTop: 20,
-                }}
-                disabled={loading}
-              />
-            </View>
-            <View
+          </View>
+          <View style={{ flexDirection: "column", alignItems: "stretch" }}>
+            <Button
+              text={"Get Nearest Hospital"}
+              onPress={() => {
+                GetNearBySearchPlace("hospital");
+                sendSMS();
+              }}
               style={{
-                flexDirection: "column",
-                alignItems: "center",
                 marginTop: 20,
               }}
-            >
-              <Image
-                resizeMode="contain"
-                style={{
-                  height: 20,
-                  width: 20,
-                }}
-                source={{ uri: city ? city.icon : null }}
-              />
-              <Text>
-                Business Status - {city ? city.business_status : "No Data Yet"}
-              </Text>
-              <Text>Place Name - {city ? city.name : "No Data Yet"}</Text>
-              <Text>
-                Place Address - {city ? city.vicinity : "No Data Yet"}
-              </Text>
-              <Text>Place ID - {city ? city.place_id : "No Data Yet"}</Text>
-            </View>
-          </ScrollView>
-        </Layout>
+              disabled={loading}
+            />
+            <Button
+              text={"Get Nearest Police"}
+              onPress={() => {
+                GetNearBySearchPlace("car_repair");
+              }}
+              style={{
+                marginTop: 20,
+              }}
+              disabled={loading}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: 20,
+            }}
+          >
+            <Image
+              resizeMode="contain"
+              style={{
+                height: 20,
+                width: 20,
+              }}
+              source={{ uri: city ? city.icon : null }}
+            />
+            <Text>
+              Business Status - {city ? city.business_status : "No Data Yet"}
+            </Text>
+            <Text>Place Name - {city ? city.name : "No Data Yet"}</Text>
+            <Text>Place Address - {city ? city.vicinity : "No Data Yet"}</Text>
+            <Text>Place ID - {city ? city.place_id : "No Data Yet"}</Text>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Layout>
   );
@@ -221,6 +279,26 @@ const styless = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#eee",
     padding: 10,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+  },
+  searchBar: {
+    borderWidth: 3.5,
+    borderColor: Colors.BLACK,
+    padding: 4,
+    borderRadius: 50,
+    paddingLeft: 10,
+    width: Dimensions.get("screen").width * 0.53,
+  },
+  userImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+  },
+  container: {
+    backgroundColor: "white",
   },
   middleButton: {
     borderLeftWidth: 1,
