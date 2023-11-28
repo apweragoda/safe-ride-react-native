@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
   PermissionsAndroid,
+  TextInput,
 } from "react-native";
 import { Accelerometer, Gyroscope } from "expo-sensors";
 import {
@@ -75,7 +76,88 @@ export default function ControlPanel({ navigation }) {
   const [gyroscopeSubscription, setGyroscopeSubscription] = useState(null);
   const [accelerometerSubscription, setAccelerometerSubscription] =
     useState(null);
+  const [accelerationValue, setAccelerationValue] = useState("");
+  const [severity, setSeverity] = useState("");
+  const [gyroscopeValue, setGyroscopeValue] = useState("");
+  const [accidentSeverity, setAccidentSeverity] = useState(null);
 
+  const handleCalculateSeverity = () => {
+    const acceleration = parseFloat(accelerationValue);
+    const gyroscope = parseFloat(gyroscopeValue);
+
+    // Membership functions and fuzzy logic calculations...
+    // Membership functions for linguistic terms
+    const membershipLow = (value) => Math.max(0, 1 - Math.abs(value - 5) / 5);
+    const membershipMedium = (value) =>
+      Math.max(0, 1 - Math.abs(value - 5) / 2);
+    const membershipHigh = (value) => Math.max(0, Math.abs(value - 5) / 5);
+
+    // Define fuzzy rules
+    const rules = [
+      { acceleration: "low", gyroscope: "low", severity: "minor" },
+      { acceleration: "medium", gyroscope: "medium", severity: "moderate" },
+      { acceleration: "high", gyroscope: "high", severity: "severe" },
+      { acceleration: "high", gyroscope: "low", severity: "verySevere" },
+      { acceleration: "low", gyroscope: "high", severity: "verySevere" },
+      // Add more rules for accuracy
+    ];
+
+    // Calculate fuzzy inference
+    const inference = rules.map((rule) => {
+      let accelerationMembership = membershipLow(accelerationValue);
+      let gyroscopeMembership = membershipLow(gyroscopeValue);
+
+      if (rule.acceleration === "medium") {
+        accelerationMembership = membershipMedium(accelerationValue);
+      } else if (rule.acceleration === "high") {
+        accelerationMembership = membershipHigh(accelerationValue);
+      }
+
+      if (rule.gyroscope === "medium") {
+        gyroscopeMembership = membershipMedium(gyroscopeValue);
+      } else if (rule.gyroscope === "high") {
+        gyroscopeMembership = membershipHigh(gyroscopeValue);
+      }
+
+      const minMembership = Math.min(
+        accelerationMembership,
+        gyroscopeMembership
+      );
+      return { severity: rule.severity, membership: minMembership };
+    });
+    // Helper function to assign weights to severity levels
+    const getSeverityValue = (severity) => {
+      switch (severity) {
+        case "minor":
+          setSeverity("minor");
+          return 4;
+        case "moderate":
+          setSeverity("moderate");
+          return 7;
+        case "severe":
+          setSeverity("severe");
+          return 10;
+        case "verySevere":
+          setSeverity("verySevere");
+          return 12; // You can adjust this weight as needed
+        default:
+          return 0;
+      }
+    };
+
+    // Defuzzify to calculate final accident severity
+    const totalWeight = inference.reduce(
+      (sum, rule) => sum + rule.membership,
+      0
+    );
+    const weightedSum = inference.reduce(
+      (sum, rule) => sum + rule.membership * getSeverityValue(rule.severity),
+      0
+    );
+    const accidentSeverityy = weightedSum / totalWeight;
+    // Update the accident severity state with the calculated value
+    setAccidentSeverity(accidentSeverityy);
+  };
   const GetNearBySearchPlace = (value) => {
     GlobalApi.nearByPlace(
       location.coords.latitude,
@@ -188,7 +270,7 @@ export default function ControlPanel({ navigation }) {
           <Ionicons
             name={isDarkmode ? "sunny" : "moon"}
             size={20}
-            color={isDarkmode ? themeColor.white100 : themeColor.dark}
+            color={isDarkmode ? themeColor.white : themeColor.dark}
           />
         }
         rightContent={
@@ -275,6 +357,58 @@ export default function ControlPanel({ navigation }) {
                   <Text>Fast</Text>
                 </TouchableOpacity>
               </View>
+            </View>
+          </View>
+          <View style={styles.listItem}>
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "stretch",
+              }}
+            >
+              <Text style={{ paddingBottom: 10 }}>
+                Fuzzy Logic Accident Severity Calculator
+              </Text>
+              <TextInput
+                style={{
+                  textAlign: "center",
+                  borderColor: isDarkmode ? themeColor.white : themeColor.dark,
+                  borderWidth: 5,
+                  borderRadius: 15,
+                  marginBottom: 10,
+                }}
+                placeholder="Enter Acceleration Value"
+                value={accelerationValue}
+                onChangeText={(text) => setAccelerationValue(text)}
+                keyboardType="numeric"
+              />
+              <TextInput
+                style={{
+                  textAlign: "center",
+                  borderColor: isDarkmode ? themeColor.white : themeColor.dark,
+                  borderWidth: 5,
+                  borderRadius: 15,
+                  marginBottom: 10,
+                }}
+                placeholder="Enter Gyroscope Value"
+                value={gyroscopeValue}
+                onChangeText={(text) => setGyroscopeValue(text)}
+                keyboardType="numeric"
+              />
+              <Button
+                text="Calculate Severity"
+                onPress={handleCalculateSeverity}
+              />
+              {accidentSeverity !== null && (
+                <>
+                  <Text style={{ textAlign: "center", paddingTop: 10 }}>
+                    Accident Severity Value: {accidentSeverity.toFixed(2)}
+                  </Text>
+                  <Text style={{ textAlign: "center", paddingTop: 10 }}>
+                    Accident Severity Level: {severity}
+                  </Text>
+                </>
+              )}
             </View>
           </View>
           <View style={{ flexDirection: "column", alignItems: "stretch" }}>
