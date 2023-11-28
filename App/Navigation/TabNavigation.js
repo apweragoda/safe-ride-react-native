@@ -10,6 +10,7 @@ import ControlPanel from "../Screens/ControlPanel";
 import Home from "../Screens/Home";
 import { themeColor, useTheme } from "react-native-rapi-ui";
 import HomeScreen from "../Screens/HomeScreen";
+import Record from "../Screens/Record";
 export default function TabNavigation() {
   const Tab = createBottomTabNavigator();
   const { isDarkmode } = useTheme();

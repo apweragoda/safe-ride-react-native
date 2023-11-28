@@ -31,7 +31,7 @@ export default () => {
     <NavigationContainer>
       {user == null && <AuthNavigation />}
       {user == false && <AuthNavigation />}
-      {user == true && <HomeNavigation />}
+      {user == true && <TabNavigation />}
     </NavigationContainer>
   );
 };

@@ -41,7 +41,7 @@ const Carousel = ({ data }) => {
 
   if (data && data.length) {
     return (
-      <View>
+      <View style={{}}>
         <FlatList
           data={data}
           ref={(flatList) => {
@@ -78,8 +78,9 @@ const Carousel = ({ data }) => {
                   height: 10,
                   width: 10,
                   backgroundColor: "#595959",
-                  margin: 8,
+                  margin: 5,
                   borderRadius: 5,
+                  marginBottom: 10,
                 }}
               />
             );

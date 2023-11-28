@@ -111,7 +111,7 @@ export default function Home({ navigation }) {
             flex: 1,
           }}
         >
-          <Header />
+          {/* <Header /> */}
           <GoogleMapView placeList={placeList} />
           <CategoryList
             setSelectedCategory={(value) => GetNearBySearchPlace(value)}

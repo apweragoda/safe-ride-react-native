@@ -8,8 +8,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  PermissionsAndroid,
 } from "react-native";
-import { Accelerometer } from "expo-sensors";
+import { Accelerometer, Gyroscope } from "expo-sensors";
 import {
   Button,
   Layout,
@@ -27,6 +28,8 @@ import * as MailComposer from "expo-mail-composer";
 import { auth } from "../../Firebase";
 import { signOut } from "firebase/auth";
 import Colors from "../../assets/Colors/Colors";
+import SoundLevel from "react-native-sound-level";
+import RNSoundLevel from "react-native-sound-level";
 
 export default function ControlPanel({ navigation }) {
   const [userEmail, setUserEmail] = useState("");
@@ -35,6 +38,7 @@ export default function ControlPanel({ navigation }) {
   const [placeList, setPlaceList] = useState([]);
   const { location, setLocation } = useContext(UserLocationContext);
   const [city, setCity] = useState({});
+  const [soundLevel, setSoundLevel] = useState(0);
   const styles = StyleSheet.create({
     listItem: {
       marginHorizontal: 20,
@@ -62,12 +66,15 @@ export default function ControlPanel({ navigation }) {
       fontSize: 30,
     },
   });
-  const [{ x, y, z }, setData] = useState({
+  const [gyroscopeData, setGyroscopeData] = useState({ x: 0, y: 0, z: 0 });
+  const [accelerometerData, setAccelerometerData] = useState({
     x: 0,
     y: 0,
     z: 0,
   });
-  const [subscription, setSubscription] = useState(null);
+  const [gyroscopeSubscription, setGyroscopeSubscription] = useState(null);
+  const [accelerometerSubscription, setAccelerometerSubscription] =
+    useState(null);
 
   const GetNearBySearchPlace = (value) => {
     GlobalApi.nearByPlace(
@@ -82,31 +89,60 @@ export default function ControlPanel({ navigation }) {
   };
   const _slow = () => Accelerometer.setUpdateInterval(1000);
   const _fast = () => Accelerometer.setUpdateInterval(16);
+  const _sloww = () => Gyroscope.setUpdateInterval(1000);
+  const _fastt = () => Gyroscope.setUpdateInterval(16);
 
-  const _subscribe = () => {
-    setSubscription(Accelerometer.addListener(setData));
+  const _subscribeGyroscope = () => {
+    setGyroscopeSubscription(
+      Gyroscope.addListener((gyroscopeData) => {
+        setGyroscopeData(gyroscopeData);
+      })
+    );
+  };
+
+  const _subscribeAccelerometer = () => {
+    setAccelerometerSubscription(
+      Accelerometer.addListener((accelerometerData) => {
+        setAccelerometerData(accelerometerData);
+      })
+    );
   };
 
   const _unsubscribe = () => {
-    subscription && subscription.remove();
-    setSubscription(null);
+    gyroscopeSubscription && gyroscopeSubscription.remove();
+    accelerometerSubscription && accelerometerSubscription.remove();
+    setGyroscopeSubscription(null);
+    setAccelerometerSubscription(null);
   };
-
   useEffect(() => {
-    // if (location) {
-    //   GetNearBySearchPlace("car_repair");
-    // }
+    if (location) {
+      GetNearBySearchPlace("hospital");
+    }
 
     _unsubscribe();
-    return () => _subscribe();
+    return () => {
+      _subscribeGyroscope();
+      _subscribeAccelerometer();
+    };
   }, []);
-
   const sendSMS = async () => {
     const isAvailable = await SMS.isAvailableAsync();
     if (isAvailable) {
       const { result } = await SMS.sendSMSAsync(
         ["+94776081348"],
-        "My sample HelloWorld message"
+        "🚨 EMERGENCY ALERT: ACCIDENT REPORT 🚨 \n " +
+          "Dear Emergency Services, An accident has occurred at the following location\n " +
+          " 📍 Latitude: " +
+          location.coords.latitude +
+          " \n" +
+          "📍 Longitude: " +
+          location.coords.longitude +
+          " \n" +
+          "Nearest Hospital :- " +
+          placeList[0].name +
+          " \n" +
+          "Additional Information: The accident involves a car with two people onboard, and there are injuries. We urgently require medical assistance at the provided location.\n" +
+          "Please dispatch emergency services to the specified coordinates immediately."
         // {
         //   attachments: {
         //     uri: "path/myfile.png",
@@ -186,15 +222,19 @@ export default function ControlPanel({ navigation }) {
               <Text style={styless.text}>
                 Accelerometer: (in x: number y: number z: number)
               </Text>
-              <Text style={styless.text}>x: {x.toFixed(2)}</Text>
-              <Text style={styless.text}>y: {y.toFixed(2)}</Text>
-              <Text style={styless.text}>z: {z.toFixed(2)}</Text>
+              <Text style={styless.text}>x: {accelerometerData.x}</Text>
+              <Text style={styless.text}>y: {accelerometerData.y}</Text>
+              <Text style={styless.text}>z: {accelerometerData.z}</Text>
               <View style={styless.buttonContainer}>
                 <TouchableOpacity
-                  onPress={subscription ? _unsubscribe : _subscribe}
+                  onPress={
+                    accelerometerSubscription
+                      ? _unsubscribe
+                      : _subscribeAccelerometer
+                  }
                   style={styless.button}
                 >
-                  <Text>{subscription ? "On" : "Off"}</Text>
+                  <Text>{accelerometerSubscription ? "On" : "Off"}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={_slow}
@@ -203,6 +243,35 @@ export default function ControlPanel({ navigation }) {
                   <Text>Slow</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={_fast} style={styless.button}>
+                  <Text>Fast</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <View style={styles.listItem}>
+            <View style={{ flexDirection: "column", alignItems: "stretch" }}>
+              <Text style={styless.text}>
+                Gyroscope: (in x: number y: number z: number)
+              </Text>
+              <Text style={styless.text}>x: {gyroscopeData.x}</Text>
+              <Text style={styless.text}>y: {gyroscopeData.y}</Text>
+              <Text style={styless.text}>z: {gyroscopeData.z}</Text>
+              <View style={styless.buttonContainer}>
+                <TouchableOpacity
+                  onPress={
+                    gyroscopeSubscription ? _unsubscribe : _subscribeGyroscope
+                  }
+                  style={styless.button}
+                >
+                  <Text>{gyroscopeSubscription ? "On" : "Off"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={_sloww}
+                  style={[styless.button, styless.middleButton]}
+                >
+                  <Text>Slow</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={_fastt} style={styless.button}>
                   <Text>Fast</Text>
                 </TouchableOpacity>
               </View>
@@ -223,7 +292,7 @@ export default function ControlPanel({ navigation }) {
             <Button
               text={"Get Nearest Police"}
               onPress={() => {
-                GetNearBySearchPlace("car_repair");
+                GetNearBySearchPlace("hospital");
               }}
               style={{
                 marginTop: 20,

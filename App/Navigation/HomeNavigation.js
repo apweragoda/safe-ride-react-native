@@ -18,11 +18,11 @@ export default function HomeNavigation() {
   const MainStack = createStackNavigator();
   return (
     <MainStack.Navigator
-      screenOptions={{
-        gestureEnabled: true,
+    // screenOptions={{
+    //   gestureEnabled: true,
 
-        ...(isAndroid && TransitionPresets.ModalPresentationIOS),
-      }}
+    //   ...(isAndroid && TransitionPresets.ModalPresentationIOS),
+    // }}
     >
       <MainStack.Screen
         name="HomeScreen"

@@ -26,7 +26,7 @@ export default function SearchBar({ setSearchText }) {
           flexDirection: "row",
           padding: 10,
           gap: 5,
-          elevation: 0.7,
+          elevation: 10,
           alignItems: "center",
           backgroundColor: Colors.WHITE,
           borderRadius: 5,

@@ -81,7 +81,7 @@ const HomeScreen = ({ navigation }) => {
         />
         <View>
           <Carousel data={dummyData} />
-          <Text
+          {/* <Text
             style={{
               fontSize: 30,
               color: "#333",
@@ -90,19 +90,19 @@ const HomeScreen = ({ navigation }) => {
             }}
           >
             Welcome
-          </Text>
+          </Text> */}
         </View>
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.row}>
               <Button
                 title="Nearby Places"
-                image={require("../../assets/help.png")}
+                image={require("../../assets/places.png")}
                 onPress={() => navigation.navigate("Places")}
               />
               <Button
                 title="Search Places"
-                image={require("../../assets/about.png")}
+                image={require("../../assets/search.png")}
                 onPress={() => navigation.navigate("Search")}
               />
             </View>

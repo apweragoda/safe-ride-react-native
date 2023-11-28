@@ -37,7 +37,7 @@ export default function Search({ navigation }) {
     },
   });
   useEffect(() => {
-    GetNearBySearchPlace("car_repair");
+    GetNearBySearchPlace("hospitals");
   }, []);
   const GetNearBySearchPlace = (value) => {
     GlobalApi.searchByText(value).then((resp) => {
@@ -81,7 +81,14 @@ export default function Search({ navigation }) {
         </View>
 
         <GoogleMapViewFull placeList={placeList} />
-        <View style={{ position: "absolute", zIndex: 20, bottom: 0 }}>
+        <View
+          style={{
+            position: "absolute",
+            zIndex: 20,
+            bottom: 0,
+            marginBottom: 90,
+          }}
+        >
           <BusinessList placeList={placeList} />
         </View>
       </View>
